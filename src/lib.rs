@@ -24,6 +24,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // read file to search through to string, ? to unwrap_or_error
     let contents = fs::read_to_string(config.file_path)?;
 
+    for line in search(&config.query, &contents) {
+        println!("{line}");
+    }
+
     Ok(())
 }
 
