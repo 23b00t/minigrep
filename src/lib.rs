@@ -21,9 +21,38 @@ impl Config {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    // read file to search through to string
+    // read file to search through to string, ? to unwrap_or_error
     let contents = fs::read_to_string(config.file_path)?;
 
-    println!("text:\n{contents}");
     Ok(())
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+    // 1. iterate over every line of contents
+    for line in contents.lines() {
+        // 2. check if line contains query
+        // 3. true -> add to results Vec
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+    // 4. return results Vec
+    results
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn one_result() {
+        let query = "dukt";
+        let contents = "\
+Rust:
+sicher, schnell, produktiv.
+Nimm drei.";
+
+        assert_eq!(vec!["sicher, schnell, produktiv."], search(query, contents));
+    }
 }

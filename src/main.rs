@@ -13,7 +13,6 @@ fn main() {
         println!("{}", err);
         process::exit(1);
     });
-    println!("query: {}, file path: {}", config.query, config.file_path);
 
     if let Err(e) = minigrep::run(config) {
         println!("An error occured: {}", e);
