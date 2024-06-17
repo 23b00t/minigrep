@@ -10,12 +10,12 @@ fn main() {
     // give arguments to struct Config to parse it and return Result
     // to gracefully handle errors
     let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("{}", err);
+        eprintln!("{}", err);
         process::exit(1);
     });
 
     if let Err(e) = minigrep::run(config) {
-        println!("An error occured: {}", e);
+        eprintln!("An error occured: {}", e);
 
         process::exit(1);
     }
