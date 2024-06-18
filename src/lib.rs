@@ -9,21 +9,37 @@ pub struct Config {
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        // expected arguments: 2
-        if args.len() < 3 {
-            return Err("Not enough arguments!\nSyntax: minigrep <search term> <file path>");
-        }
-        // clone to avoid lifetime handeling -> improve later!!
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+        let (query, file_path, case) = Self::parse_arguments(args)?;
 
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let ignore_case = if env::var("IGNORE_CASE").is_ok() {
+            true
+        } else {
+            case
+        };
 
         Ok(Config {
             query,
             file_path,
             ignore_case,
         })
+    }
+
+    fn parse_arguments(args: &[String]) -> Result<(String, String, bool), &'static str> {
+        if args.len() < 3 {
+            return Err("Not enough arguments!\nSyntax: minigrep [-i] <search term> <file path>");
+        }
+
+        if args.len() == 3 {
+            Ok((args[1].clone(), args[2].clone(), false))
+        } else if args.len() == 4 {
+            if args[1] == "-i" {
+                Ok((args[2].clone(), args[3].clone(), true))
+            } else {
+                Err("Wrong Argument!\nSyntax: minigrep [-i] <search term> <file path>")
+            }
+        } else {
+            Err("Too many arguments!\nSyntax: minigrep [-i] <search term> <file path>")
+        }
     }
 }
 
